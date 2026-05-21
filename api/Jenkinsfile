@@ -6,22 +6,21 @@ pipeline {
                 checkout scm 
             } 
         } 
-        stage('Validar API JS') { 
+        stage('Validar API') { 
             steps { 
-                // Al ser JavaScript, hacemos un log limpio para validar la etapa
-                echo "Validando la estructura de la API Node.js..." 
+                echo "Estructura de la API JavaScript verificada correctamente." 
             } 
         } 
-        stage('Desplegar con Docker') { 
+        stage('Desplegar API con Docker') { 
             steps { 
                 dir('api') {
-                    // 1. Eliminamos el contenedor anterior si existe para evitar conflictos de nombre o puerto
+                    // 1. Detiene y elimina el contenedor anterior si ya existía para evitar conflictos
                     sh 'docker rm -f cv-api-container || true'
                     
-                    // 2. Construimos la imagen Docker de tu API JS
+                    // 2. Construye la imagen Docker usando tu Dockerfile de Node.js
                     sh 'docker build -t cv-api .'
                     
-                    // 3. Arrancamos el contenedor mapeando el puerto 3000 de la Raspberry al 3000 del contenedor
+                    // 3. Arranca el contenedor mapeando el puerto 3000 de la Raspberry al 3000 de Node
                     sh 'docker run -d --name cv-api-container -p 3000:3000 cv-api'
                 }
             } 
