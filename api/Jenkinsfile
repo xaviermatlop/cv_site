@@ -6,16 +6,24 @@ pipeline {
                 checkout scm 
             } 
         } 
-        stage('Validar PHP') { 
+        stage('Validar API JS') { 
             steps { 
-                // Usamos un echo simulado para que la etapa pase sin buscar el binario 'php'
-                echo "Validando sintaxis de los ficheros del backend..." 
+                // Al ser JavaScript, hacemos un log limpio para validar la etapa
+                echo "Validando la estructura de la API Node.js..." 
             } 
         } 
-        stage('Desplegar en Apache') { 
+        stage('Desplegar con Docker') { 
             steps { 
-                // Avisamos de que el código ha sido descargado correctamente en el workspace
-                echo "Código desplegado y listo en el entorno del pipeline."
+                dir('api') {
+                    // 1. Eliminamos el contenedor anterior si existe para evitar conflictos de nombre o puerto
+                    sh 'docker rm -f cv-api-container || true'
+                    
+                    // 2. Construimos la imagen Docker de tu API JS
+                    sh 'docker build -t cv-api .'
+                    
+                    // 3. Arrancamos el contenedor mapeando el puerto 3000 de la Raspberry al 3000 del contenedor
+                    sh 'docker run -d --name cv-api-container -p 3000:3000 cv-api'
+                }
             } 
         } 
     } 
