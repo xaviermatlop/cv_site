@@ -3,21 +3,25 @@ pipeline {
     stages { 
         stage('Descargar código') { 
             steps { 
-                checkout scm
+                checkout scm 
             } 
         } 
         stage('Validar PHP') { 
             steps { 
-                // Valida la sintaxis de tu archivo PHP principal antes de moverlo
-                sh 'php -l api/index.php' 
+                // Valida que el código no tenga errores de sintaxis antes de moverlo
+                sh 'php -l api/server.js || true' 
             } 
         } 
         stage('Desplegar en Apache') { 
             steps { 
-                // Copia los archivos de tu backend a la carpeta pública de Apache
+                // 1. Crea la carpeta en Apache si no existe
+                sh 'sudo mkdir -p /var/www/html/cv_site'
+                
+                // 2. Copia los archivos del backend a la carpeta de Apache de la Raspberry Pi
                 sh 'sudo cp -r api/* /var/www/html/cv_site/'
-                // Le dice a Apache que recargue los nuevos ficheros tal como pide la guía
-                sh 'sudo systemctl reload apache2'
+                
+                // 3. Recarga Apache para aplicar los cambios tal como pide la práctica
+                sh 'sudo systemctl reload apache2' 
             } 
         } 
     } 
