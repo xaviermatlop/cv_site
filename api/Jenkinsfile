@@ -2,20 +2,23 @@ pipeline {
     agent any 
     stages { 
         stage('Descargar código') { 
-            steps { checkout scm } 
-        } 
-        stage('Construir Imagen JS') { 
             steps { 
-                dir('api') { 
-                    sh 'docker build -t cv-api .' 
-                } 
+                checkout scm
             } 
         } 
-        stage('Desplegar API Node') { 
+        stage('Validar PHP') { 
             steps { 
-                sh 'docker rm -f cv-api-container || true' 
-                sh 'docker run -d --name cv-api-container -p 3000:3000 cv-api' 
+                // Valida la sintaxis de tu archivo PHP principal antes de moverlo
+                sh 'php -l api/index.php' 
+            } 
+        } 
+        stage('Desplegar en Apache') { 
+            steps { 
+                // Copia los archivos de tu backend a la carpeta pública de Apache
+                sh 'sudo cp -r api/* /var/www/html/cv_site/'
+                // Le dice a Apache que recargue los nuevos ficheros tal como pide la guía
+                sh 'sudo systemctl reload apache2'
             } 
         } 
     } 
-} 
+}
