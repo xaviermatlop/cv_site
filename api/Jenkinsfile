@@ -1,0 +1,21 @@
+pipeline { 
+    agent any 
+    stages { 
+        stage('Descargar código') { 
+            steps { checkout scm } 
+        } 
+        stage('Construir Imagen JS') { 
+            steps { 
+                dir('api') { 
+                    sh 'docker build -t cv-api .' 
+                } 
+            } 
+        } 
+        stage('Desplegar API Node') { 
+            steps { 
+                sh 'docker rm -f cv-api-container || true' 
+                sh 'docker run -d --name cv-api-container -p 3000:3000 cv-api' 
+            } 
+        } 
+    } 
+} 

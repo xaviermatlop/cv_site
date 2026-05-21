@@ -46,54 +46,70 @@ function App() {
   return (
     <div className="cv-container">
       <aside className="sidebar">
-        <div className="profile-circle">{cv.nombre.split(' ').map(n => n[0]).join('').slice(0,2)}</div>
+        <div className="profile-circle">
+          {cv.nombre ? cv.nombre.split(' ').map(n => n[0]).join('').slice(0, 2) : 'CV'}
+        </div>
         <h1 className="sidebar-name">{cv.nombre}</h1>
-        <p className="sidebar-title">{cv.titulo}</p>
+        <p className="sidebar-title">{cv.titulo || cv.profesion}</p>
 
-        <div className="sidebar-section">
-          <p className="section-label">Contacto</p>
-          <p className="contact-item">✉ {cv.email}</p>
-          <p className="contact-item">🐙 {cv.github}</p>
-        </div>
-
-        <div className="sidebar-section">
-          <p className="section-label">Habilidades</p>
-          <div className="skills-wrap">
-            {cv.habilidades?.map(s => <span key={s} className="skill-tag">{s}</span>)}
+        {(cv.email || cv.github) && (
+          <div className="sidebar-section">
+            <p className="section-label">Contacto</p>
+            {cv.email && <p className="contact-item">✉ {cv.email}</p>}
+            {cv.github && <p className="contact-item">🐙 {cv.github}</p>}
           </div>
-        </div>
+        )}
+
+        {cv.habilidades && cv.habilidades.length > 0 && (
+          <div className="sidebar-section">
+            <p className="section-label">Habilidades</p>
+            <div className="skills-wrap">
+              {cv.habilidades.map(s => <span key={s} className="skill-tag">{s}</span>)}
+            </div>
+          </div>
+        )}
 
         {error && <p className="error-msg">{error}</p>}
       </aside>
 
       <main className="main-content">
-        <section className="main-section">
-          <p className="main-label">Sobre mí</p>
-          <p className="about-text">{cv.descripcion}</p>
-        </section>
+        {cv.descripcion && (
+          <section className="main-section">
+            <p className="main-label">Sobre mí</p>
+            <p className="about-text">{cv.descripcion}</p>
+          </section>
+        )}
 
-        <section className="main-section">
-          <p className="main-label">Experiencia</p>
-          {cv.experiencia?.map((e, i) => (
-            <div key={i} className="timeline-item">
-              <p className="item-title">{e.empresa}</p>
-              <p className="item-sub">{e.cargo}</p>
-              <p className="item-period">{e.periodo}</p>
-              <p className="item-desc">{e.descripcion}</p>
-            </div>
-          ))}
-        </section>
+        {cv.experiencia && (
+          <section className="main-section">
+            <p className="main-label">Experiencia</p>
+            {Array.isArray(cv.experiencia) ? (
+              cv.experiencia.map((e, i) => (
+                <div key={i} className="timeline-item">
+                  <p className="item-title">{e.empresa}</p>
+                  <p className="item-sub">{e.cargo}</p>
+                  <p className="item-period">{e.periodo}</p>
+                  <p className="item-desc">{e.descripcion}</p>
+                </div>
+              ))
+            ) : (
+              <p className="about-text">{cv.experiencia}</p>
+            )}
+          </section>
+        )}
 
-        <section className="main-section">
-          <p className="main-label">Educación</p>
-          {cv.educacion?.map((e, i) => (
-            <div key={i} className="timeline-item">
-              <p className="item-title">{e.institucion}</p>
-              <p className="item-sub">{e.titulo}</p>
-              <p className="item-period">{e.periodo}</p>
-            </div>
-          ))}
-        </section>
+        {cv.educacion && cv.educacion.length > 0 && (
+          <section className="main-section">
+            <p className="main-label">Educación</p>
+            {cv.educacion.map((e, i) => (
+              <div key={i} className="timeline-item">
+                <p className="item-title">{e.institucion}</p>
+                <p className="item-sub">{e.titulo}</p>
+                <p className="item-period">{e.periodo}</p>
+              </div>
+            ))}
+          </section>
+        )}
       </main>
     </div>
   );

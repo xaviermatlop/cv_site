@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+
+router.get('/', (req, res) => { 
+  return res.json({ 
+    id: 1, 
+    nombre: "Xavier Matep", 
+    profesion: "Desarrollador Web", 
+    experiencia: "Despliegue automatizado con Jenkins y Docker superado con éxito." 
+  }); 
+}); 
+
+module.exports = router;

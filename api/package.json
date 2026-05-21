@@ -1,0 +1,13 @@
+{
+  "name": "cv-api",
+  "version": "1.0.0",
+  "description": "Node.js API for CV Site",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
